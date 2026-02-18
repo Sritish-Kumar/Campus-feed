@@ -241,7 +241,12 @@ export default {
         content: sanitizeString(data.content),
         link: data.link || null,
         announcement_date: data.announcement_date,
-        expires_at: data.expires_at || null
+        // Auto-set expires_at to 7 days from announcement_date if not provided
+        expires_at: data.expires_at || (() => {
+          const date = new Date(data.announcement_date);
+          date.setDate(date.getDate() + 7);
+          return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        })()
       };
 
       // Insert into database
